@@ -1,17 +1,38 @@
 const express=require("express");
 const app=express();
 
-app.get("/",(req,res)=>{
-    res.send("Hello welcome to port 7777");
+app.get("/user",(req,res)=>{
+    res.send({firstname:"Nikhil", lastname:"Agrawal"})
+})
+
+app.post("/user",(req,res)=>{
+   res.send("Data has been successfully added to then SDB");
+})
+
+app.delete("/user",(req,res)=>{
+    res.send("Data has been successfully Deleted to then SDB");
+})
+
+app.use("/test/12",(req,res)=>{
+    res.send("AbrakaDabra gili gili chuu");
 });
 
-app.get("/test",(req,res)=>{
+app.use("/test",(req,res)=>{
     res.send("This is our test routing without fail using get function");
 });
 
-app.get("/hello",(req,res)=>{
-    res.send("hello  ");
-})
+// app.use("/hello",(req,res)=>{
+//     res.send("hello  ");
+// })
+
+// app.use((req,res)=>{
+//     res.send("Welcome to the port")
+// })
+
+// app.use("/",(req,res)=>{
+//     res.send("Hello welcome to port 7777");
+// });
+
 
 
 app.listen(7777,()=>{
