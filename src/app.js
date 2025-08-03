@@ -4,7 +4,7 @@ const connectDB=require("./config/database");
 const User=require("./models/user");
 const app=express();
 
-app.post("/signup",(req,res)=>{
+app.post("/signup",async(req,res)=>{
   const user=new User({
     firstName:"navrang",
     lastName:"Agrawal",
@@ -13,8 +13,12 @@ app.post("/signup",(req,res)=>{
     age:26,
     gender:"male"
   })
-  user.save();
+  try{
+    await user.save();
   res.send("Data successfully created");
+  }catch(err){
+    res.status(400).send("data was not added:"+ err.message);
+  }
 })
 
 connectDB().
