@@ -1,22 +1,55 @@
 const express=require("express");
+
+const connectDB=require("./config/database");
+const User=require("./models/user");
 const app=express();
 
-const {adminAuth,userAuth}=require("./middleware/auth")
-
-app.use("/admin",adminAuth)
-
-app.get("/user",userAuth,(req,res)=>{
-    res.send("User route working fine")
+app.post("/signup",(req,res)=>{
+  const user=new User({
+    firstName:"navrang",
+    lastName:"Agrawal",
+    emailId:"navrang@agrawal.com",
+    passWord:"navrang@123",
+    age:26,
+    gender:"male"
+  })
+  user.save();
+  res.send("Data successfully created");
 })
 
-app.get("/admin/getAllData",(req,res)=>{
-    res.send("Succcessfully received all the data");
+connectDB().
+then(()=>{
+    console.log("connected successfully to the Database");
+    app.listen(7777, () => {
+      console.log("Server has started running on port 7777");
+    });
+})
+.catch((err)=>{
+  console.error("Connection failed to Database with error ", err);
 })
 
-app.get("/admin/deleteData",(req,res)=>{
-    res.send("Succesfully deleted a data");
-})
 
-app.listen(7777,()=>{
-    console.log("server has started running on port 7777");
-})
+
+ 
+
+  
+
+// app.get("/getUserData",(req,res)=>{
+//     try{
+//         throw new Error("bnxvhj");
+    
+//     res.send("User route working fine")
+//     }
+//     catch(err){
+//        res.status(500).send("Error is handle using try catch");
+//     }
+// })
+
+// app.use("/",(err,req,res,next)=>{
+//     if(err){
+//         res.status(500).send("Something went wrong");
+//     }
+// })
+
+
+
