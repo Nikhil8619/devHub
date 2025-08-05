@@ -17,6 +17,95 @@ app.post("/signup",async(req,res)=>{
   }
 })
 
+// Getting 1 user using get user api
+app.get("/user",async(req,res)=>{
+  const userEmail=req.body.emailId;
+
+ try{
+
+  // const user=await User.findOne({emailId:userEmail});
+  const user=await User.findOne();
+  
+  if(!user){
+    res.status(304).send("user not found");
+  }else{
+    res.send(user);
+  }
+  // const users= await User.find({emailId:userEmail});
+  // if(users.length===0){
+  // res.status(404).send("user not found");
+  // }else{
+  //   res.send(users);
+  // }
+  
+ }
+ catch(err){
+  res.status(400).send("Something went wrong");
+ }
+
+})
+
+  // Find User By id
+
+  app.get("/userById",async(req,res)=>{
+    const userId=req.body.userId;
+  try{
+    
+    const user=await User.findById(userId);
+    if(!user){
+      res.status(404).send("user not found");
+    }else{
+      res.send(user);
+    }
+  }
+  catch(err){
+    res.status(400).send("something went wrong");
+  }
+  })
+
+// API Feed:- Getting all the user from DB
+app.get("/feed",async(req,res)=>{
+  try{
+    const users= await User.find({});
+    res.send(users);
+  } 
+  catch(err){
+  res.status(400).send("Something went wrong");
+ }
+})
+
+// Delete a user
+app.delete("/user",async(req,res)=>{
+  const userId=req.body.userId;
+  try{
+    const user=await User.findByIdAndDelete(userId);
+    if(!user){
+      res.status(404).send("user not found");
+    }else{
+      res.send("user deleted successfully");
+    }
+    
+  }catch(err){
+    res.status(400).send("something went wrong");
+  }
+})
+
+
+// Update data in DB
+app.patch("/user",async(req,res)=>{
+  const userId=req.body.userId;
+  const data=req.body;
+  try{
+    const user=await User.findByIdAndUpdate(userId,data,{returnDocument:'before'})
+    console.log(user);
+    res.send("user updated successfully");
+  }
+  catch(err){
+    res.status(400).send("something went wrong");
+  }
+})
+
+// Connect to DB
 connectDB().
 then(()=>{
     console.log("connected successfully to the Database");
