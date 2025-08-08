@@ -1,16 +1,31 @@
 const express=require("express");
-
+const bcrypt=require("bcrypt");
 const connectDB=require("./config/database");
 const User=require("./models/user");
 const app=express();
+const {validateSignUpData}=require("./utils/validation");
 
 app.use(express.json());
 
 app.post("/signup",async(req,res)=>{
-  
-  const user=new User(req.body)
-  try{
-    await user.save();
+try{
+     // Validation of Data
+   validateSignUpData(req);
+   const {firstName,lastName,emailId,passWord}=req.body;
+  // Password encryption to hashCode using bcrypt Library
+   
+   const passwordHash=await bcrypt.hash(passWord,10);
+
+  //  Create new instance of a user model
+  const user=new User({
+    firstName,
+    lastName,
+    emailId,
+    passWord:passwordHash,
+  })
+
+  //  Saving User to the DB
+   await user.save();
   res.send("Data successfully created");
   }catch(err){
     res.status(400).send("data was not added:"+ err.message);
