@@ -4,8 +4,12 @@ const connectDB=require("./config/database");
 const User=require("./models/user");
 const app=express();
 const {validateSignUpData}=require("./utils/validation");
+const cookieParser=require("cookie-parser");
+const jwt=require("jsonwebtoken")
+const {userAuth}=require("./middleware/auth");
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup",async(req,res)=>{
 try{
@@ -41,6 +45,11 @@ app.post("/login",async (req,res)=>{
   }
   const isPasswordValid=await bcrypt.compare(passWord,user.passWord);
   if(isPasswordValid){
+    const token=jwt.sign({ _id:user._id}, 'DEV@HUB$123', {expiresIn:"1d"});
+
+    res.cookie("token",token, {
+      expires:new Date(Date.now() + 8 * 3600000)
+    });
     res.send("User Login successfully!!!");
   }else{
     throw new Error("Invalid Credentials");
@@ -49,6 +58,23 @@ app.post("/login",async (req,res)=>{
   catch(err){
     res.status(400).send("data was not added:"+ err.message);
   }
+})
+
+app.get("/profile",userAuth,async(req,res)=>{
+  try{
+    const user=req.user;
+  // console.log(user);
+  res.send(user);
+  }
+  catch(err){
+  res.status(400).send("Error" + err.message);
+ }
+})
+
+// Sending Connection Request
+app.post("/sentConnectionRequest",userAuth ,async(req,res)=>{
+  const user=req.user;
+  res.send(user.firstName +" has sent the connection request");
 })
 
 // Getting 1 user using get user api
