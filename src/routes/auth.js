@@ -22,10 +22,18 @@ try{
   })
 
   //  Saving User to the DB
-   await user.save();
-  res.send("Data successfully created");
+   const saveUser=await user.save();
+   const token= await saveUser.getJWT();
+   res.cookie("token", token , {
+    expires: new Date(Date.now()+ 8*360000)
+   });
+
+  res.json({
+    message:"User added successfully",
+    data: saveUser
+  })
   }catch(err){
-    res.status(400).send("data was not added:"+ err.message);
+    res.status(400).send("ERROR:"+ err.message);
   }
 })
 
